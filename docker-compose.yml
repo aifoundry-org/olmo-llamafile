@@ -1,0 +1,9 @@
+name: llfiler
+services:
+  olmo:
+    build: 
+      dockerfile: Dockerfile
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
+      - HF_REPO=${HF_REPO}
+      - HF_REPO_FILE=${HF_REPO_FILE}
