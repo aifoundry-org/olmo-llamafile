@@ -3,6 +3,12 @@
 *Allows to convert gguf-ed LMMs to llamafile and upload them to public HF repo*
 *You can do that from your local machine and from GitHub Actions*
 
+# Status
+
+- [x] Convert gguf model to llamafile and upload to huggingface using docker
+- [x] GitHub actions for convert gguf model to llamafile and upload to huggingface
+- [ ] GitHub actions for convert raw model to llamafile and upload to huggingface
+
 # Up and running
 
 ## Preparation
