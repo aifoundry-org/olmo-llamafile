@@ -2,12 +2,30 @@ name: Prototype to create llamafile
 run-name: Create Llamafile and upload it 🚀
 on: 
     workflow_dispatch:
+      inputs:
+        HF_REPO:
+          description: 'Huggingface repo where to upload llamafile'
+          required: true
+          type: string
+          default: 'aifoundry-org/OLMo-1.7-7B-hf.llamafile'
+        HF_REPO_FILE:
+          description: 'Uploaded lllamafile filename'
+          required: true
+          type: string
+          default: 'OLMo-1.7-7B-hf.Q8_0.llamafile'
+        REMOTE_GGUF_MODEL:
+          description: 'Link from which to download gguf version of the model'
+          required: true
+          type: string
+          default: 'https://huggingface.co/mradermacher/OLMo-1.7-7B-hf-GGUF/resolve/main/OLMo-1.7-7B-hf.Q8_0.gguf'
+        LLAMAFILE_RELEASE:
+          description: 'Link to llamafile release zip'
+          required: true
+          type: string
+          default: 'https://github.com/Mozilla-Ocho/llamafile/releases/download/0.8.6/llamafile-0.8.6.zip'
 env:
   # Setting an environment variable with the value of a configuration variable
   HF_TOKEN: ${{ secrets.HF_TOKEN }}
-  HF_REPO: ${{ vars.HF_REPO }}
-  HF_REPO_FILE: ${{ vars.HF_REPO_FILE }}
-  REMOTE_GGUF_MODEL: ${{ vars.REMOTE_GGUF_MODEL }}
 jobs:
   create-llamafile-and-upload:
     runs-on: ubuntu-22.04
@@ -15,9 +33,10 @@ jobs:
       - name: Install hf CLI and llamafile
         run: |
             pip install -U "huggingface_hub[cli]"
-            curl -L https://github.com/Mozilla-Ocho/llamafile/releases/download/0.8.6/llamafile-0.8.6.zip -O 
-            unzip llamafile-0.8.6.zip 
-            rm -rf llamafile-0.8.6.zip
+            curl -L ${{ inputs.LLAMAFILE_RELEASE }} -o llamafile.zip 
+            unzip llamafile.zip 
+            rm -rf llamafile.zip
+            mv $(ls | grep llamafile-) llamafile
       - name: "Fix run-detectors/WINE"
         run: |
             sudo wget -O /usr/bin/ape https://cosmo.zip/pub/cosmos/bin/ape-$(uname -m).elf
@@ -26,10 +45,10 @@ jobs:
             sudo sh -c "echo ':APE-jart:M::jartsr::/usr/bin/ape:' >/proc/sys/fs/binfmt_misc/register"
 
       - name: Download gguf model
-        run: curl -L $REMOTE_GGUF_MODEL -o model.gguf
+        run:  curl -L ${{ inputs.REMOTE_GGUF_MODEL }} -o model.gguf
       - name: Convert to llamafile
-        run: ./llamafile-0.8.6/bin/llamafile-convert model.gguf
+        run: ./llamafile/bin/llamafile-convert model.gguf
       - name: Rename converted model
-        run: mv model.llamafile $HF_REPO_FILE
+        run: mv model.llamafile ${{ inputs.HF_REPO_FILE }}
       - name: Upload llamafile to huggingface
-        run: huggingface-cli upload $HF_REPO $HF_REPO_FILE
+        run: huggingface-cli upload ${{ inputs.HF_REPO }} ${{ inputs.HF_REPO_FILE }}

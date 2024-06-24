@@ -56,6 +56,6 @@ huggingface-cli upload "$HF_REPO" "$HF_REPO_FILE"
 
 ## Upload from repository
 
-1. Copy `.github/workflows/prototype.yml` workflow to your repo
+1. Copy `.github/workflows/main.yml` workflow to your repo
 2. Add secret `HF_TOKEN` to your repo secrets
-3. Add repo variable `HF_REPO`, `HF_REPO_FILE`, `REMOTE_GGUF_MODEL` for your repo variables (where `REMOTE_GGUF_MODEL` is a link to download gguf model via `curl`)
+3. Input `HF_REPO`, `HF_REPO_FILE`, `REMOTE_GGUF_MODEL`, `LLAMAFILE_RELEASE` on workflow start

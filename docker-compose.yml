@@ -3,6 +3,8 @@ services:
   olmo:
     build: 
       dockerfile: Dockerfile
+      args:
+        - LLAMAFILE_RELEASE=${LLAMAFILE_RELEASE}
     environment:
       - HF_TOKEN=${HF_TOKEN}
       - HF_REPO=${HF_REPO}

@@ -1,7 +1,15 @@
 FROM ubuntu:latest
 
+ARG LLAMAFILE_RELEASE
+
 WORKDIR /app
 
-RUN apt update && apt install -y git curl unzip git-lfs python3 python3-pip && pip3 install --break-system-packages -U "huggingface_hub[cli]" && curl -L https://github.com/Mozilla-Ocho/llamafile/releases/download/0.8.6/llamafile-0.8.6.zip -O && unzip llamafile-0.8.6.zip && rm -rf llamafile-0.8.6.zip
+RUN apt update && \
+    apt install -y git curl unzip git-lfs python3 python3-pip && \
+    pip3 install --break-system-packages -U "huggingface_hub[cli]" && \
+    curl -L ${LLAMAFILE_RELEASE} -o llamafile.zip && \ 
+    unzip llamafile.zip && \ 
+    rm -rf llamafile.zip && \
+    mv $(ls | grep llamafile-) llamafile
 
 CMD ["sleep", "infinity"]
